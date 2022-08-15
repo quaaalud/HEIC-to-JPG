@@ -15,25 +15,82 @@ from PIL import Image
 from pillow_heif import register_heif_opener
 
 
-def get_file_name(org_file):
-    return os.path.splitext(os.path.basename(org_file))[0]
-
-def convert_heic_to_jpg(org_file, save_path=None):
-    if not save_path: save_path = f'C:/Users/{user}/Desktop'
-    file_name = get_file_name(org_file)
-    register_heif_opener()
-    with Image.open(org_file) as image_1:
-        image_1.format = 'jpg'
-        image_1.save(f'{save_path}/{file_name}.jpg')    
-
+def get_file_name(file_path:str):
+    """
+    RETURNS THE NAME OF A FILE FROM ANY GIVEN FILE PATH.
     
-def folder_heic_to_jpg(folder, save_path=None):
+    Parameters
+    ----------
+    org_file : STRING
+    
+        FULL FILE PATH OF THE FILE YOU WISH TO CONVERT FROM .HEIC TO JPG.
+
+    Returns
+    -------
+    STRING
+        
+        THE NAME OF THE FILE BEING CONVERTED.
+
+    """
+    return os.path.splitext(os.path.basename(file_path))[0]
+
+
+def convert_heic_to_jpg(org_file:str, save_path=''):
+    """
+    CONVERTS ANY .HEIC IMAGE TO .JPG IMAGE.
+    
+    Parameters
+    ----------
+    org_file : STRING
+    
+        FULL FILE PATH OF THE FILE YOU WISH TO CONVERT FROM .HEIC TO JPG.
+        
+    save_path : STRING, optional
+    
+        NAME OF DIRECTORY TO SAVE THE CONVERTED FILE. The default is ''.
+    
+    Returns
+    -------
+    None.
+
+    """
+    if not save_path: save_path = f'C:/Users/{user}/Desktop'
+    if str(org_file).endswith('.heic'):
+        file_name = get_file_name(org_file)
+        register_heif_opener()
+        with Image.open(org_file) as image_1:
+            image_1.format = 'jpg'
+            image_1.save(f'{save_path}/{file_name}.jpg')    
+
+
+def folder_heic_to_jpg(folder, save_path=''):
+    """
+    CONVERT ALL .HEIC FILES TO .JPG CONTAINED IN A GIVEN DIRECTORY.
+
+    Parameters
+    ----------
+    folder : STRING
+        
+        PATH OF DIRECTORY CONTAINING .HEIC FILES TO BE CONVERTED TO .JPG.
+        
+    save_path : STRING, optional
+        NAME OF DIRECTORY TO SAVE THE CONVERTED FILE. The default is ''.
+
+    Returns
+    -------
+    None.
+
+    """
     for file in os.listdir(folder):
-        if str(file).endswith('.heic'):
-            org_file = f'{folder}/{file}'
-            convert_heic_to_jpg(org_file, save_path=save_path)
+        org_file = f'{folder}/{file}'
+        convert_heic_to_jpg(org_file, save_path=save_path)
             
-def main():   
+
+def main(): 
+    """
+    MAIN FUNCTION FOR .HEIC TO .JPG GUI APP
+    
+    """
     main_layout = [
         [sg.Text('CONVERT HEIC TO JPG', justification='center')],
         [sg.Text('Select a file to convert:',
@@ -61,7 +118,7 @@ def main():
         if event == sg.WIN_CLOSED or event == 'Cancel':
             break
         if event == 'Convert Folder':
-            folder_popup()
+            gui_folder_popup()
         if event == 'Convert File':
             org_file = values['-FILE-']
             save = values['-SAVE-']
@@ -79,7 +136,11 @@ def main():
             window.refresh()
     window.close()
 
-def folder_popup():
+def gui_folder_popup():
+    """
+    GUI POP-UP FOR COMBINE FOLDER FUNCTION IN THE .HEIC TO .JPG APP
+    
+    """
     pop_up = [
         [sg.Text('\nCONVERT FOLDER TO JPG\n\n',
                  justification='center')
@@ -131,5 +192,3 @@ def folder_popup():
 
 if __name__ == '__main__':
     main()
-    
-    
